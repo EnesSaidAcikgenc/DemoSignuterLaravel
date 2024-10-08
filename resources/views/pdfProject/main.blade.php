@@ -4,61 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İmza Alanı</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        body {
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-        }
-
-        .container {
-            height: 90%;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .canvas {
-            border: 1px solid black;
-            cursor: crosshair;
-        }
-
-        .tools {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-top: 1rem;
-        }
-
-        button {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-        }
-
-        .input-group {
-            margin: 1rem 0;
-            display: flex;
-            flex-direction: column;
-            width: 200px;
-        }
-
-        .input-group input {
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
+        body { height: 100vh; width: 100vw; overflow: hidden; }
+        .container { height: 90%; width: 100%; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .canvas { border: 1px solid black; cursor: crosshair; }
+        .tools { display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 1rem; }
+        button { margin-top: 1rem; padding: 0.5rem 1rem; font-size: 1rem; }
+        .input-group { margin: 1rem 0; display: flex; flex-direction: column; width: 200px; }
+        .input-group input, .input-group select { padding: 0.5rem; font-size: 1rem; }
     </style>
 </head>
 <body>
-
-
 <div class="container">
-    <!-- Form yapısı -->
     <form id="signature-form" action="/save-signature" method="POST">
-        <!-- Ad Soyad formu -->
+        @csrf
         <div class="input-group">
             <label for="first-name">Ad:</label>
             <input type="text" id="name" name="name" placeholder="Adınızı girin" required>
@@ -67,11 +27,23 @@
             <label for="last-name">Soyad:</label>
             <input type="text" id="last-name" name="last_name" placeholder="Soyadınızı girin" required>
         </div>
-
-        <!-- İmza alanı -->
+        <div class="input-group">
+            <label for="kimlik">Kimlik:</label>
+            <input type="text" id="kimlik" name="kimlik" placeholder="Kimlik numaranızı girin" required>
+        </div>
+        <div class="input-group">
+            <label for="cinsiyet">Cinsiyet:</label>
+            <select id="cinsiyet" name="cinsiyet" required>
+                <option value="">Seçiniz</option>
+                <option value="Erkek">Erkek</option>
+                <option value="Kadın">Kadın</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="universite">Üniversite:</label>
+            <input type="text" id="universite" name="universite" placeholder="Üniversitenizi girin" required>
+        </div>
         <canvas class="canvas" width="650" height="350"></canvas>
-
-        <!-- Butonlar ve araçlar -->
         <div class="tools">
             <button type="submit" id="save-btn">Okudum Onaylıyorum</button>
         </div>
@@ -84,15 +56,12 @@
     let isDrawing = false;
     let xStart = 0, yStart = 0;
 
-    // Draw white background on canvas
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Set pen size and color (fixed)
     const penSize = 5;
     const penColor = "black";
 
-    // Draw on canvas
     canvas.addEventListener("mousedown", (e) => {
         isDrawing = true;
         xStart = e.offsetX;
@@ -119,9 +88,8 @@
         ctx.stroke();
     };
 
-    // Form submit eventini yakala
     document.getElementById("signature-form").addEventListener("submit", function (e) {
-        e.preventDefault(); // Sayfanın yeniden yüklenmesini engelle
+        e.preventDefault();
 
         const signatureData = canvas.toDataURL('image/png');
         const formData = new FormData(this);
@@ -130,20 +98,22 @@
         fetch(this.action, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Laravel CSRF koruması
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: formData
-        }).then(response => {
-            if (response.ok) {
-                alert('İmza başarıyla kaydedildi.');
-            } else {
-                alert('İmza kaydedilemedi.');
-            }
-        }).catch(error => {
-            console.error('Hata:', error);
-        });
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.success);
+                } else {
+                    alert('İmza kaydedilemedi.');
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+            });
     });
 </script>
-
 </body>
 </html>

@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('signatures', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('name');
             $table->string('last_name');
+            $table->string('kimlik');
+            $table->string('cinsiyet');
+            $table->string('universite');
             $table->string('image'); // İmza resmi dosya adı
             $table->timestamps();
         });
+
     }
 
     /**

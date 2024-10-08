@@ -38,6 +38,9 @@
     <tr>
         <th>Ad</th>
         <th>Soyad</th>
+        <th>Kimlik</th>
+        <th>Cinsiyet</th>
+        <th>Üniverste</th>
         <th>İmza</th>
     </tr>
     </thead>
@@ -46,6 +49,9 @@
         <tr>
             <td>{{ $signature->name }}</td>
             <td>{{ $signature->last_name }}</td>
+            <td>{{ $signature->kimlik }}</td>
+            <td>{{ $signature->cinsiyet }}</td>
+            <td>{{ $signature->universite }}</td>
             <td>
                 <img src="{{ asset('storage/signatures/' . $signature->image) }}" alt="İmza Görseli">
             </td>

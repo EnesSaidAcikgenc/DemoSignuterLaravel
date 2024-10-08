@@ -9,5 +9,5 @@ class Signature extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','last_name','image'];
+    protected $fillable = ['name','last_name','kimlik','cinsiyet','universite','image','user_id'];
 }

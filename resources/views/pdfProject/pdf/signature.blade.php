@@ -2,60 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>İmza Kayıtları</title>
+    <title>Kullanıcı Bilgileri ve İmza</title>
     <style>
-        *{
+        * {
             font-family: 'DejaVu Sans', sans-serif;
-
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
-
-        table, th, td {
-            border: 1px solid black;
-        }
-
         th, td {
+            border: 1px solid black;
             padding: 10px;
             text-align: left;
         }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
         img {
-            width: 100px;
+            width: 150px;
             height: auto;
+        }
+        .form-header {
+            font-weight: bold;
+            padding: 10px;
+        }
+        .section {
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
+<div class="section">
+    <div class="form-header">Adı ve Soyadı:</div>
+    <div>{{ $signature->name }} {{ $signature->last_name }}</div>
+</div>
+<div class="section">
+    <div class="form-header">T.C. Kimlik No:</div>
+    <div>{{ $signature->kimlik }}</div>
+</div>
+<div class="section">
+    <div class="form-header">Cinsiyeti</div>
+    <div>{{$signature->cinsiyet}}</div>
+</div>
 
-<h2>Form Kayıtları</h2>
+<div class="section">
+    <div class="form-header">Mezun Olduğu (Üniversite, Fakülte ve Bölüm):</div>
+    <div>{{ $signature->universite }}</div>
+</div>
 
-<table>
-    <thead>
-    <tr>
-        <th>Ad</th>
-        <th>Soyad</th>
-        <th>İmza</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach($signatures as $signature)
-        <tr>
-            <td>{{ $signature->name }}</td>
-            <td>{{ $signature->last_name }}</td>
-            <td>
-                <img src="{{ public_path('storage/signatures/' . $signature->image) }}" alt="İmza Görseli">
-            </td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
-
+<div class="section">
+    <div class="form-header">Başvuru Sahibi - Tarih - İmza:</div>
+    <div>{{ $signature->created_at->format('d/m/Y') }}</div>
+    <img src="{{ public_path('storage/signatures/' . $signature->image) }}" alt="İmza">
+</div>
 </body>
 </html>
